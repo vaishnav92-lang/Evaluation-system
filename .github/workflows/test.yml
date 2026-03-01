@@ -1,0 +1,30 @@
+name: Aritzia Tracker Tests
+
+on:
+  push:
+    branches: ["claude/**"]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install -r aritzia_tracker/requirements.txt
+          python -m playwright install --with-deps chromium
+
+      - name: Run unit tests
+        working-directory: aritzia_tracker
+        run: python tests/test_scraper.py
+
+      - name: Run live integration test
+        working-directory: aritzia_tracker
+        run: python tests/live_test.py
