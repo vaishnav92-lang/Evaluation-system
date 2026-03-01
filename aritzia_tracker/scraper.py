@@ -26,7 +26,7 @@ def scrape_product(url: str, timeout_ms: int = 30000) -> ProductData:
     """Visit an Aritzia product page and extract pricing data.
 
     Args:
-        url: Full Aritzia product URL.
+        url: Full Aritzia product URL or file:// path for testing.
         timeout_ms: Max time to wait for page elements in milliseconds.
 
     Returns:
@@ -50,15 +50,20 @@ def scrape_product(url: str, timeout_ms: int = 30000) -> ProductData:
             page.goto(url, wait_until="domcontentloaded", timeout=timeout_ms)
 
             # Aritzia is JS-heavy — wait for price elements to render.
-            page.wait_for_selector(
-                "[aria-label='Product Price'],"
-                "[class*='product-price'],"
-                "[class*='price'],"
-                "[data-auid='product-price']",
-                timeout=timeout_ms,
-            )
-            # Extra settle time for dynamic content.
-            page.wait_for_timeout(2000)
+            # For local file:// URLs this resolves instantly.
+            try:
+                page.wait_for_selector(
+                    "[aria-label='Product Price'],"
+                    "[class*='product-price'],"
+                    "[class*='price'],"
+                    "[data-auid='product-price']",
+                    timeout=min(timeout_ms, 5000),
+                )
+            except PlaywrightTimeout:
+                logger.debug("Price selector wait timed out — continuing with extraction")
+            # Extra settle time for dynamic content (skip for local files).
+            if not url.startswith("file://"):
+                page.wait_for_timeout(2000)
 
             # --- Product name ---
             name = _extract_name(page)
