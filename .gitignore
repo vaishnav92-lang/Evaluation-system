@@ -8,3 +8,6 @@ venv/
 dist/
 build/
 .pytest_cache/
+
+# Aritzia tracker — generated data
+aritzia_tracker/price_history.json

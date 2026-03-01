@@ -1,0 +1,5 @@
+# Aritzia Price Tracker — Watchlist
+# Add one product URL per line. Lines starting with # are ignored.
+
+https://www.aritzia.com/us/en/product/the-effortless-pant%E2%84%A2/77775.html
+https://www.aritzia.com/us/en/product/the-effortless-pant%E2%84%A2/96000277.html
